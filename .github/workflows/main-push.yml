@@ -4,7 +4,7 @@
 name: Python application
 
 on:
-  pull_request:
+  push:
     branches: [ "main" ]
 
 permissions:
@@ -45,8 +45,3 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-
-    - name: Merge pull requests (automerge-action)
-      uses: pascalgn/automerge-action@v0.15.5
-      env:
-        GITHUB_TOKEN: "${{ secrets.REPO_TOKEN }}"
