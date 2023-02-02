@@ -17,7 +17,7 @@ class User(Base):
         b_email = bool(c.match(self.email))
         if not b_email :
             return False, "이메일 형식이 올바르지 않습니다."
-        c = re.compile('^.{4,30}$')
+        c = re.compile('^.{6,30}$')
         b_email = bool(c.match(self.email))
         if not b_email :
             return False, "이메일은 최소 4자 부터 30자 입니다."
