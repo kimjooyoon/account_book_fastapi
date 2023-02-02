@@ -2,7 +2,7 @@ from fastapi.routing import APIRouter
 from fastapi_sqlalchemy import db
 from pymysql.err import IntegrityError
 from core.api.user.models import User
-from core.api.user.schema import UserCreate
+from core.api.user.schema import UserCreate, UserLogin
 
 from core.util.auth_jwt import *
 
@@ -31,5 +31,26 @@ async def user_create(
     except Exception as IntegrityError:
         db.session.rollback()
         if "Duplicate" in str(IntegrityError):
+            return {"message": "중복된 이메일입니다."}
+        return {"message": "서버 에러입니다."}
+
+
+@user_router.post("/login")
+async def login(
+        req: UserLogin,
+):
+    try:
+        query = db.session.query(
+            User.email, User.id, User.password
+        ).first()
+
+        verify = pwcheck(req.password, query.password)
+        if verify:
+            return createToken(query.id, query.email)
+        else:
+            return {"status": "fail"}
+    except IntegrityError:
+        db.session.rollback()
+        if "duplicate" in str(IntegrityError):
             return {"message": "중복된 이메일입니다."}
         return {"message": "서버 에러입니다."}
