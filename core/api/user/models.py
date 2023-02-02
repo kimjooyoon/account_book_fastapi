@@ -20,8 +20,8 @@ class User(Base):
         c = re.compile('^.{6,30}$')
         b_email = bool(c.match(self.email))
         if not b_email :
-            return False, "이메일은 최소 4자 부터 30자 입니다."
+            return False, "이메일은 최소 6자 부터 30자 입니다."
         b_pw = bool(c.match(self.password))
         if not b_pw :
-            return False, "비밀번호는 최소 4자 부터 30자 입니다."
+            return False, "비밀번호는 최소 6자 부터 30자 입니다."
         return True, ""
