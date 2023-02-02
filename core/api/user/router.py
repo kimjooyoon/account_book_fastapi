@@ -1,3 +1,5 @@
+from typing import Union
+from fastapi import Header
 from fastapi.routing import APIRouter
 from fastapi_sqlalchemy import db
 from pymysql.err import IntegrityError
@@ -54,3 +56,13 @@ async def login(
         if "duplicate" in str(IntegrityError):
             return {"message": "중복된 이메일입니다."}
         return {"message": "서버 에러입니다."}
+
+
+@user_router.get("/claims")
+async def getClaims(
+        token: Union[str, None] = Header(default=None, convert_underscores=False)
+):
+    if verify(token):
+        return decode(token)
+    else:
+        return {"result": "fail"}
