@@ -1,0 +1,14 @@
+version: '3'
+services:
+  local-db:
+    image: library/mysql:5.7
+    container_name: infra-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      TZ: Asia/Seoul
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    platform: linux/amd64
