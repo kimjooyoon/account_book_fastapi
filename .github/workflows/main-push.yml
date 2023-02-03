@@ -18,6 +18,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: up mysql
+      working-directory: "./mysql"
+      run: docker-compose up -d
+
+    - name: buffering time for db container
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '10s'
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
