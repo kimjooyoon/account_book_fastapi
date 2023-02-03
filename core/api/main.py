@@ -5,6 +5,7 @@ from fastapi_sqlalchemy import DBSessionMiddleware
 from core.api.user.router import user_router
 from core.api.user.models import Base as User_base
 from core.api.account_books.models import Base as Book_base
+from core.api.account_books_detail.models import Base as Detail_base
 from fastapi_sqlalchemy import db
 
 # 단순 schema.py => database migration 용도 입니다.
@@ -18,6 +19,7 @@ app.add_middleware(DBSessionMiddleware, db_url=DB_URL)
 engine = create_engine(DB_URL)
 User_base.metadata.create_all(bind=engine)
 Book_base.metadata.create_all(bind=engine)
+Detail_base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
