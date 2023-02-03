@@ -49,5 +49,3 @@ def test_ABookDetail_verify():
     assert False is m.verify()
     m.memo = "success"
     assert True is m.verify()
-
-
