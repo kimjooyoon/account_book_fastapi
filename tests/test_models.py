@@ -1,7 +1,8 @@
 from core.api.user.models import User
+from core.api.account_books.models import AccountBook
 
 
-def test_verify():
+def test_UserModel_verify():
     m = User()
     m.email = "test@test.test"
     m.password = "testaaaaa"
@@ -25,3 +26,13 @@ def test_verify():
     assert "비밀번호는 최소 6자 부터 30자 입니다." in m.verify()
     m.password = "test1234"
     assert True is m.verify()[0]
+
+
+def test_ABook_verify():
+    m = AccountBook()
+    m.used_money = 1000
+    assert True is m.verify()
+    m.used_money = 0
+    assert True is m.verify()
+    m.used_money = -100
+    assert False is m.verify()

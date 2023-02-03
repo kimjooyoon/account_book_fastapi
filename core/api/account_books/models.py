@@ -11,7 +11,13 @@ class AccountBook(Base):
     __tablename__ = 'account_books'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey(User.id), index=True)
+    user_id = Column(Integer, ForeignKey(User.id), index=True, nullable=False)
     used_money = Column(Integer, nullable=False)
     update_at = Column(DateTime(timezone=True), default=now, onupdate=now)
     delete_at = Column(DateTime(timezone=True))
+
+    def verify(self):
+        if self.used_money >= 0:
+            return True
+        else:
+            return False
