@@ -9,8 +9,8 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(String, nullable=False)
-    password = Column(String, nullable=False)
+    email = Column(String(40), nullable=False)
+    password = Column(String(60), nullable=False)
 
     def verify(self):
         c = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
