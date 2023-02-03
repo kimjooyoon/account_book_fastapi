@@ -1,5 +1,6 @@
 from core.api.user.models import User
 from core.api.account_books.models import AccountBook
+from core.api.account_books_detail.models import AccountBookDetail
 
 
 def test_UserModel_verify():
@@ -36,3 +37,17 @@ def test_ABook_verify():
     assert True is m.verify()
     m.used_money = -100
     assert False is m.verify()
+
+
+def test_ABookDetail_verify():
+    m = AccountBookDetail()
+    m.memo = "test"
+    assert True is m.verify()
+    m.memo = ""
+    assert True is m.verify()
+    m.memo = "aksnsklfasnfklnlkaaasndksalfnsaklfnsalfknasklfnaslfknasfklasnflkasnfklasfnlkafnsaklfnaslkfnasflknsafl "
+    assert False is m.verify()
+    m.memo = "success"
+    assert True is m.verify()
+
+
