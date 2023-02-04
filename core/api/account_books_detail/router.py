@@ -30,7 +30,10 @@ def create_detail(user_id, book_id, memo):
 def is_books_by_id_and_userid(id, user_id):
     query = db.session.query(
         AccountBook.user_id
-    ).where(AccountBook.id == id).first()
+    ).where(
+        AccountBook.id == id,
+        AccountBook.dest_date.is_(null())
+    ).first()
     if query is None:
         return False
     if query[0] == user_id:
@@ -41,7 +44,11 @@ def is_books_by_id_and_userid(id, user_id):
 def exist_dest_books(dest_date, user_id):
     query = db.session.query(
         AccountBook.id
-    ).where(AccountBook.dest_date == dest_date, AccountBook.user_id == user_id).first()
+    ).where(
+        AccountBook.dest_date == dest_date,
+        AccountBook.user_id == user_id,
+        AccountBook.dest_date.is_(null())
+    ).first()
     if query is None:
         return False
     return True
@@ -70,7 +77,10 @@ async def accounts_create(
 def get_detail_by_id(id):
     detail = db.session.query(
         AccountBookDetail
-    ).where(AccountBookDetail.id == id).first()
+    ).where(
+        AccountBookDetail.id == id,
+        AccountBookDetail.delete_at.is_(null())
+    ).first()
     return detail
 
 
@@ -104,7 +114,10 @@ def get_account_detail_list(id, user_id):
     list = db.session.query(
         AccountBookDetail
     ).where(
-        AccountBook.user_id == user_id, AccountBook.id == id).all()
+        AccountBook.user_id == user_id,
+        AccountBook.id == id,
+        AccountBook.delete_at.is_(null())
+    ).all()
     return list
 
 
