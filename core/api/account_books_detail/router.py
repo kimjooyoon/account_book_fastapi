@@ -1,3 +1,4 @@
+import json
 from typing import Union
 from fastapi import Header
 from fastapi.routing import APIRouter
@@ -225,9 +226,20 @@ async def share_detail(
                 hashed_name = str(random.getrandbits(128))
                 v = str(conn.hget(key=hashed_name, name=hashed_name))
                 m: AccountBookDetail = get_detail_by_id(id, user_id)
-                conn.hset(key=hashed_name, name=hashed_name, value=str({m.memo, m.used_money}))
+                conn.hset(key=hashed_name, name=hashed_name, value=json.dumps({m.memo: m.used_money}).encode('utf-8'))
 
                 return {"link": "/share/" + hashed_name}
         except Exception as IntegrityError:
             return {"result": "system error: " + str(IntegrityError)}
     return {"result": "fail"}
+
+
+@detail_router.get("/share/{hashed_str}")
+async def share_detail(
+        hashed_str: str,
+):
+    with redis.StrictRedis(host='127.0.0.1', port=6379, db=0) as conn:
+        v = conn.hget(key=hashed_str, name=hashed_str).decode('utf-8')
+        data = dict(json.loads(v))
+
+        return data
