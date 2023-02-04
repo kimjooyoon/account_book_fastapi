@@ -12,7 +12,6 @@ class AccountBook(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey(User.id), index=True, nullable=False)
-    used_money = Column(Integer, nullable=False)
     dest_date = Column(String(12), nullable=False)
     update_at = Column(DateTime(timezone=True), default=now, onupdate=now)
     delete_at = Column(DateTime(timezone=True))

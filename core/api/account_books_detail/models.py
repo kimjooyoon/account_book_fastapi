@@ -12,6 +12,7 @@ class AccountBookDetail(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     account_book_id = Column(Integer, ForeignKey(AccountBook.id), index=True)
+    used_money = Column(Integer, nullable=False)
     memo = Column(String(110), nullable=False)
     update_at = Column(DateTime(timezone=True), default=now, onupdate=now)
     delete_at = Column(DateTime(timezone=True))
