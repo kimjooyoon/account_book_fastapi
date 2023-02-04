@@ -136,5 +136,3 @@ async def accounts_list(
         return {"result": "fail"}
 
     return ""
-# TODO: URL = /accounts/detail/{:id} GET
-# TODO: URL = /accounts-detail/{:id} GET
