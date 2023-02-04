@@ -9,10 +9,10 @@ sql 은 orm 을 최대한 이용했고, 마지막 작업인 개인 가계부 정
 
 docker-container 를 python 코드에서 컨트롤 할 수 있도록
 test-container 를 염두하고 작업을 해보았지만,
-코드가 너무 길어지고, 결국 중복 작업이 불가피하다고 했습니다.
+코드가 너무 길어지고, 중복 작업이 생깁니다.
 
 github action 에서 docker-compose build 하는 세팅을 찾았고 
-이를 적용하여, 테스트 환경 문제도 어느정도 해결했습니다.
+이를 적용하여, 테스트 환경 문제도 해결했습니다.
 
 아쉬운 점은 python orm 에 대한 미숙함과 dependency injection 을 구성하려다가 시간을 많이 보냈고
 기능 구현만 아슬하게 끝낸것 입니다.
