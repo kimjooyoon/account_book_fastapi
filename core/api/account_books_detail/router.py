@@ -98,3 +98,28 @@ async def accounts_update(
             return {"result": "system error: " + str(IntegrityError)}
     else:
         return {"result": "fail"}
+
+
+def get_account_detail_list(id, user_id):
+    list = db.session.query(
+        AccountBookDetail
+    ).where(
+        AccountBook.user_id == user_id, AccountBook.id == id).all()
+    return list
+
+
+@detail_router.get("/accounts/{id}/detail")
+async def accounts_list(
+        id: int,
+        token: Union[str, None] = Header(default=None, convert_underscores=False)
+):
+    if verify(token):
+        user_id = decode(token).get('user_id')
+        try:
+            return get_account_detail_list(id, user_id)
+
+        except Exception as IntegrityError:
+            return {"result": "system error: " + str(IntegrityError)}
+    else:
+        return {"result": "fail"}
+
