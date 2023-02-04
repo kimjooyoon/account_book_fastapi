@@ -226,7 +226,9 @@ async def share_detail(
                 hashed_name = str(random.getrandbits(128))
                 v = str(conn.hget(key=hashed_name, name=hashed_name))
                 m: AccountBookDetail = get_detail_by_id(id, user_id)
-                conn.hset(key=hashed_name, name=hashed_name, value=json.dumps({m.memo: m.used_money}).encode('utf-8'))
+                conn.hset(key=hashed_name, name=hashed_name,
+                          value=json.dumps({m.memo: m.used_money}).encode('utf-8'))
+                conn.expire(name=hashed_name, time=datetime.timedelta(minutes=10))
 
                 return {"link": "/share/" + hashed_name}
         except Exception as IntegrityError:
