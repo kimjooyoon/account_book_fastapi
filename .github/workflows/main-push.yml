@@ -18,8 +18,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: up mysql
-      working-directory: "./mysql"
+    - name: up mysqlredis
+      working-directory: "./mysqlredis"
       run: docker-compose up -d
 
     - name: buffering time for db container
