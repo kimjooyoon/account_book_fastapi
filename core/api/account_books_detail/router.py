@@ -93,7 +93,6 @@ async def accounts_update(
             return {"result": "해당 가계부가 없습니다."}
         update_detail(detail, memo)
         try:
-            detail_id = create_detail(user_id, account_id, memo)
             return {"result": "success"}
         except Exception as IntegrityError:
             return {"result": "system error: " + str(IntegrityError)}
