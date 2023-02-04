@@ -34,11 +34,13 @@ def is_books_by_id_and_userid(id, user_id):
         AccountBook.user_id
     ).where(
         AccountBook.id == id,
-        AccountBook.dest_date.is_(null())
-    ).first()
-    if query is None:
+        AccountBook.delete_at.is_(null())
+    )
+
+    u_id = query.first()
+    if u_id is None:
         return False
-    if query[0] == user_id:
+    if u_id[0] == user_id:
         return True
     return False
 

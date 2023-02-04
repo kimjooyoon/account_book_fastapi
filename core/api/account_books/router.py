@@ -114,7 +114,7 @@ async def accounts_update(
 
 def get_account_list(user_id):
     query = db.session.query(AccountBook).where(
-        AccountBook.user_id == user_id, AccountBook.delete_at.isnot(null())
+        AccountBook.user_id == user_id, AccountBook.delete_at.is_(null())
     )
     list = query.all()
     return list
