@@ -79,11 +79,12 @@ async def accounts_create(
         return {"result": "fail"}
 
 
-def get_detail_by_id(id: int):
+def get_detail_by_id(id: int, user_id: int):
     query = db.session.query(
         AccountBookDetail
     ).where(
         AccountBookDetail.id == id,
+        AccountBook.user_id == user_id,
         AccountBookDetail.delete_at.is_(null())
     )
     detail = query.first()
@@ -106,11 +107,30 @@ async def accounts_update(
     if verify(token):
         user_id = decode(token).get('user_id')
         memo = req.memo
-        detail: AccountBookDetail = get_detail_by_id(id)
+        detail: AccountBookDetail = get_detail_by_id(id, user_id)
         if detail is None:
             return {"result": "해당 가계부가 없습니다."}
         update_detail(detail, memo, money)
         try:
+            return {"result": "success"}
+        except Exception as IntegrityError:
+            return {"result": "system error: " + str(IntegrityError)}
+    else:
+        return {"result": "fail"}
+
+
+@detail_router.post("/accounts/detail-copy/{id}")
+async def accounts_copy(
+        id: int = 0,
+        token: Union[str, None] = Header(default=None, convert_underscores=False)
+):
+    if verify(token):
+        user_id = decode(token).get('user_id')
+        detail: AccountBookDetail = get_detail_by_id(id, user_id)
+        if detail is None:
+            return {"result": "해당 가계부가 없습니다."}
+        try:
+            create_detail(user_id, detail.account_book_id, detail.memo, detail.used_money)
             return {"result": "success"}
         except Exception as IntegrityError:
             return {"result": "system error: " + str(IntegrityError)}
@@ -145,15 +165,15 @@ async def accounts_list(
         return {"result": "fail"}
 
 
-def delete_detail(id: int):
-    m: AccountBookDetail = get_detail_by_id(id)
+def delete_detail(id: int, user_id: int):
+    m: AccountBookDetail = get_detail_by_id(id, user_id)
     m.delete_at = datetime.datetime.today()
     db.session.commit()
     return m.id
 
 
 def exist_detail_by_id(id, user_id):
-    m: AccountBookDetail = get_detail_by_id(id)
+    m: AccountBookDetail = get_detail_by_id(id, user_id)
     m2: AccountBook = get_account(m.account_book_id, user_id)
 
     if m.account_book_id == m2.id:
@@ -180,7 +200,7 @@ async def detail_delete(
         if not exist_detail_by_id(id, user_id):
             return {"result": now + ", 해당 일자 가계부 상세정보는 없습니다."}
         try:
-            deleted_id = delete_detail(id)
+            deleted_id = delete_detail(id, user_id)
             return {"deleted_id": deleted_id}
         except Exception as IntegrityError:
             return {"result": "system error: " + str(IntegrityError)}
