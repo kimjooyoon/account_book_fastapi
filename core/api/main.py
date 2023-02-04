@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi_sqlalchemy import DBSessionMiddleware
 
 from core.api.user.router import user_router
+from core.api.account_books.router import account_books_router
 from core.api.user.models import Base as User_base
 from core.api.account_books.models import Base as Book_base
 from core.api.account_books_detail.models import Base as Detail_base
@@ -33,6 +34,7 @@ async def say_hello(name: str):
 
 
 app.include_router(user_router)
+app.include_router(account_books_router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
