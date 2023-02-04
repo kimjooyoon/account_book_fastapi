@@ -49,3 +49,23 @@ async def accounts_create(
             return {"result": "system error: " + str(IntegrityError)}
     else:
         return {"result": "fail"}
+
+
+@account_books_router.post("/accounts/date/{dest_date}")
+async def accounts_create(
+        dest_date: str,
+        money: int = 0,
+        token: Union[str, None] = Header(default=None, convert_underscores=False)
+):
+    if verify(token):
+        user_id = decode(token).get('user_id')
+        now = dest_date
+        if exist_dest_books(now, user_id):
+            return {"result": now + ", 일자 가계부는 이미 추가 되었습니다."}
+        try:
+            id = create_account_books(user_id, now, money)
+            return {id}
+        except Exception as IntegrityError:
+            return {"result": "system error: " + str(IntegrityError)}
+    else:
+        return {"result": "fail"}
