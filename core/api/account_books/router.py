@@ -2,6 +2,7 @@ from typing import Union
 from fastapi import Header
 from fastapi.routing import APIRouter
 from fastapi_sqlalchemy import db
+from sqlalchemy.sql.expression import null
 from pymysql.err import IntegrityError
 
 from datetime import datetime
@@ -35,13 +36,14 @@ def update_account_books(account_id, user_id, money):
 def get_account(account_id: int, user_id: int):
     return db.session.query(AccountBook).where(
         AccountBook.id == account_id,
-        AccountBook.user_id == user_id
+        AccountBook.user_id == user_id,
+        AccountBook.delete_at.is_(null())
     ).first()
 
 
 def exist_account_by_id(id: int, user_id: int):
     query = db.session.query(
-        AccountBook.id
+        AccountBook.id, AccountBook.delete_at.is_(null())
     ).where(AccountBook.id == id, AccountBook.user_id == user_id).first()
     if query is None:
         return False
@@ -50,7 +52,7 @@ def exist_account_by_id(id: int, user_id: int):
 
 def exist_dest_books(dest_date, user_id):
     query = db.session.query(
-        AccountBook.id
+        AccountBook.id, AccountBook.delete_at.is_(null())
     ).where(AccountBook.dest_date == dest_date, AccountBook.user_id == user_id).first()
     if query is None:
         return False
@@ -116,7 +118,10 @@ async def accounts_update(
 
 
 def get_account_list(user_id):
-    list = db.session.query(AccountBook).where(AccountBook.user_id == user_id).all()
+    query = db.session.query(AccountBook).where(
+        AccountBook.user_id == user_id, AccountBook.delete_at.isnot(null())
+    )
+    list = query.all()
     return list
 
 
@@ -135,4 +140,26 @@ async def accounts_list(
     else:
         return {"result": "fail"}
 
-    return ""
+
+def delete_account(id, user_id):
+    m: AccountBook = get_account(id, user_id)
+    m.delete_at = datetime.datetime.today()
+    db.session.commit()
+    return m.id
+
+
+@account_books_router.delete("/accounts/{id}")
+async def accounts_delete(
+        id: int,
+        token: Union[str, None] = Header(default=None, convert_underscores=False)
+):
+    if verify(token):
+        user_id = decode(token).get('user_id')
+        if not exist_account_by_id(id, user_id):
+            return {"result": now + ", 해당 일자 가계부는 없습니다."}
+        try:
+            deleted_id = delete_account(id, user_id)
+            return {"deleted_id": deleted_id}
+        except Exception as IntegrityError:
+            return {"result": "system error: " + str(IntegrityError)}
+    return {"result": "fail"}
