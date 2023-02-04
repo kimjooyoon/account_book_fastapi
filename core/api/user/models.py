@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, VARCHAR
 from sqlalchemy.orm import declarative_base
 import re
 
@@ -10,7 +10,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(40), nullable=False)
-    password = Column(String(60), nullable=False)
+    password = Column(VARCHAR(100), nullable=False)
 
     def verify(self):
         c = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
